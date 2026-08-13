@@ -1,0 +1,359 @@
+// MOTM B2B Growth Assessment — database schema
+// Assessment.type defaults to "B2B_GROWTH" so future assessment types
+// (Dealer Development, Export Readiness, ...) can add their own
+// response tables while reusing Company, User, ScoreResult shape,
+// CalculatorResult shape, AuditLog and EmailLog.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  SALES
+  CUSTOMER
+}
+
+enum AssessmentStatus {
+  DRAFT
+  IN_PROGRESS
+  SUBMITTED
+  SCORED
+  REPORT_GENERATED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ChannelLevel {
+  NONE
+  PARTIAL
+  FULL
+}
+
+enum MicroToolCategory {
+  WORKSHEET
+  DIAGNOSTIC
+  CALCULATOR
+}
+
+model User {
+  id       String  @id @default(cuid())
+  clerkId  String? @unique
+  email    String  @unique
+  name     String?
+  phone    String?
+  jobTitle String?
+  role     Role    @default(CUSTOMER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assessments         Assessment[] @relation("AssessmentOwner")
+  assignedAssessments Assessment[] @relation("AssignedSalesperson")
+  auditLogs           AuditLog[]
+
+  @@index([role])
+}
+
+model Company {
+  id            String   @id @default(cuid())
+  name          String
+  website       String?
+  industry      String?
+  products      String?
+  services      String?
+  countries     String[]
+  employees     String?
+  revenueRange  String?
+  targetMarket  String?
+  avgDealSize   Float?
+  currency      String   @default("INR")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assessments Assessment[]
+
+  @@index([name])
+}
+
+model Assessment {
+  id     String @id @default(cuid())
+  type   String @default("B2B_GROWTH")
+  status AssessmentStatus @default(DRAFT)
+
+  currentStep Int @default(0)
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  userId String?
+  user   User?   @relation("AssessmentOwner", fields: [userId], references: [id], onDelete: SetNull)
+
+  leadScore              Int?
+  priority               Priority?
+  assignedSalespersonId  String?
+  assignedSalesperson    User?    @relation("AssignedSalesperson", fields: [assignedSalespersonId], references: [id], onDelete: SetNull)
+  notes                  String?
+
+  icpResponse            ICPResponse?
+  decisionMakerResponse  DecisionMakerResponse?
+  salesFunnelResponse    SalesFunnelResponse?
+  marketingResponse      MarketingResponse?
+  businessGoalsResponse  BusinessGoalsResponse?
+  scoreResult            ScoreResult?
+  calculatorResult       CalculatorResult?
+  aiReport               AIReport?
+  auditLogs              AuditLog[]
+  emailLogs              EmailLog[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  submittedAt DateTime?
+
+  @@index([companyId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([assignedSalespersonId])
+}
+
+/// Section 2 — ICP Worksheet. Answers are free-form per question, so raw
+/// Q&A is kept as JSON; `generated` holds the derived ICP profiles/personas.
+model ICPResponse {
+  id           String @id @default(cuid())
+  assessmentId String @unique
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  answers   Json
+  generated Json?
+
+  updatedAt DateTime @updatedAt
+}
+
+/// Section 3 — Decision Maker Mapping.
+model DecisionMakerResponse {
+  id           String @id @default(cuid())
+  assessmentId String @unique
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  answers   Json
+  generated Json?
+
+  updatedAt DateTime @updatedAt
+}
+
+/// Section 4 — Sales Funnel Worksheet. Typed numeric columns because the
+/// Calculator Engine reads these directly.
+model SalesFunnelResponse {
+  id           String @id @default(cuid())
+  assessmentId String @unique
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  monthlyLeads    Int
+  qualifiedLeads  Int
+  meetings        Int
+  rfqs            Int
+  proposals       Int
+  orders          Int
+  revenue         Float
+  salesCycleDays  Int
+  leadSources     Json
+  followUpProcess String?
+  monthlySpend    Float?
+
+  generated Json?
+  updatedAt DateTime @updatedAt
+}
+
+/// Section 5 — Marketing Questions. Typed per-channel adoption level so
+/// the Scoring Engine can read these directly.
+model MarketingResponse {
+  id           String @id @default(cuid())
+  assessmentId String @unique
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  seo           ChannelLevel @default(NONE)
+  linkedin      ChannelLevel @default(NONE)
+  coldEmail     ChannelLevel @default(NONE)
+  emailMarketing ChannelLevel @default(NONE)
+  tradeShows    ChannelLevel @default(NONE)
+  crm           ChannelLevel @default(NONE)
+  automation    ChannelLevel @default(NONE)
+  website       ChannelLevel @default(NONE)
+  analytics     ChannelLevel @default(NONE)
+  content       ChannelLevel @default(NONE)
+
+  generated Json?
+  updatedAt DateTime @updatedAt
+}
+
+/// Section 6 — Business Goals.
+model BusinessGoalsResponse {
+  id           String @id @default(cuid())
+  assessmentId String @unique
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  goals String[]
+
+  generated Json?
+  updatedAt DateTime @updatedAt
+}
+
+/// Diagnostics Engine output — the 8 required 0-100 scores.
+model ScoreResult {
+  id           String @id @default(cuid())
+  assessmentId String @unique
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  icpScore            Int
+  salesScore          Int
+  marketingScore      Int
+  automationScore     Int
+  crmScore            Int
+  leadGenScore        Int
+  digitalPresenceScore Int
+  overallScore        Int
+
+  createdAt DateTime @default(now())
+}
+
+/// Calculator Engine output.
+model CalculatorResult {
+  id           String @id @default(cuid())
+  assessmentId String @unique
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  leadConversionRate Float
+  meetingRate        Float
+  rfqRate            Float
+  closeRate          Float
+
+  leadLeakage   Json
+  weakestStage  String
+
+  revenueLeakage             Float
+  cac                        Float?
+  pipelineHealth             Float
+  salesVelocity              Float
+  roi                        Float?
+  estimatedLostRevenue       Float
+  estimatedGrowthOpportunity Float
+
+  createdAt DateTime @default(now())
+}
+
+/// AI Generated Personalized Report (Phase 2).
+model AIReport {
+  id           String @id @default(cuid())
+  assessmentId String @unique
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  model        String
+  rawResponse  Json
+  sections     Json
+  pdfUrl       String?
+
+  generatedAt DateTime @default(now())
+}
+
+model AuditLog {
+  id           String      @id @default(cuid())
+  assessmentId String?
+  assessment   Assessment? @relation(fields: [assessmentId], references: [id], onDelete: SetNull)
+  userId       String?
+  user         User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  action   String
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([assessmentId, createdAt])
+}
+
+model EmailLog {
+  id           String     @id @default(cuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  to      String
+  subject String
+  status  String
+
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([assessmentId])
+}
+
+/// Lightweight standalone lead magnets (worksheets/diagnostics/calculators) from the
+/// content-to-tool ladder — deliberately generic (JSON in/out) rather than typed tables
+/// per tool, since each has different fields. The flagship Assessment above stays
+/// untouched; these are separate, shorter, single-page tools that cross-link up to it.
+model MicroToolSubmission {
+  id       String            @id @default(cuid())
+  toolSlug String
+  category MicroToolCategory
+
+  email       String?
+  contactName String?
+  companyName String?
+  currency    String  @default("INR")
+
+  inputs    Json
+  outputs   Json?
+  aiSummary Json?
+  pdfModel  String?
+
+  status      AssessmentStatus @default(IN_PROGRESS)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  submittedAt DateTime?
+
+  @@index([toolSlug])
+  @@index([email])
+  @@index([createdAt])
+}
+
+/// Backs a simple sliding-window rate limiter for public, cost-triggering
+/// entry points (AI calls, outbound email). Rows are cheap and short-lived —
+/// a periodic cleanup isn't implemented yet since volume is low, but old
+/// rows can be pruned by createdAt if the table grows large.
+model RateLimitHit {
+  id     String @id @default(cuid())
+  key    String
+  action String
+
+  createdAt DateTime @default(now())
+
+  @@index([key, action, createdAt])
+}
+
+/// Lead captured before a Stage-1 PDF guide download. Guides are static
+/// files under public/guides/ and have no computed output/AI summary, so
+/// this stays a plain lead record rather than reusing MicroToolSubmission.
+model GuideLead {
+  id         String @id @default(cuid())
+  guideSlug  String
+  guideTitle String
+
+  contactName String
+  email       String
+  companyName String?
+  phone       String?
+
+  createdAt DateTime @default(now())
+
+  @@index([guideSlug])
+  @@index([email])
+  @@index([createdAt])
+}
