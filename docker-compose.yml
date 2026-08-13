@@ -1,0 +1,18 @@
+services:
+  web:
+    build: .
+    container_name: motm-growth-assessment
+    restart: unless-stopped
+    ports:
+      - "4016:3000"
+    env_file:
+      - .env
+    networks:
+      - motm-net
+
+networks:
+  motm-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24
