@@ -21,13 +21,14 @@ export async function submitGuideLead(slug: string, raw: unknown) {
       contactName: data.contactName,
       email: data.email,
       companyName: data.companyName,
-      phone: data.phone || null,
+      phone: data.phone,
     },
   });
 
   await notifyGuideDownloaded({
     contactName: data.contactName,
     email: data.email,
+    phone: data.phone,
     companyName: data.companyName,
     guideTitle: guide.title,
   });

@@ -19,10 +19,11 @@ export async function submitMicroTool(slug: string, raw: unknown) {
     contactName: string;
     email: string;
     companyName: string;
+    phone: string;
     currency?: string;
   };
 
-  const { contactName, email, companyName, currency, ...toolInputs } = data;
+  const { contactName, email, companyName, phone, currency, ...toolInputs } = data;
   await rateLimitSubmission("microtool_submit", email);
   const resolvedCurrency = currency ?? "INR";
   // Keep currency available to compute() (heuristic $-per-unit constants read it)
@@ -36,6 +37,7 @@ export async function submitMicroTool(slug: string, raw: unknown) {
       email,
       contactName,
       companyName,
+      phone,
       currency: resolvedCurrency,
       inputs: toolInputs as never,
       outputs: output as never,
@@ -48,6 +50,7 @@ export async function submitMicroTool(slug: string, raw: unknown) {
   await notifyMicroToolSubmitted({
     contactName,
     email,
+    phone,
     companyName,
     toolName: tool.name,
     resultUrl: `${baseUrl}/tools/${slug}/result/${submission.id}`,

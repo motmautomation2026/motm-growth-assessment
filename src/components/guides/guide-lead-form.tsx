@@ -39,15 +39,15 @@ export function GuideLeadForm({
     <form onSubmit={onSubmit} className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Full Name" error={errors.contactName?.message}>
-          <Input {...register("contactName")} placeholder="Jane Smith" />
+          <Input {...register("contactName")} placeholder="Rohan Sharma" />
         </Field>
         <Field label="Work Email" error={errors.email?.message}>
-          <Input {...register("email")} type="email" placeholder="jane@company.com" />
+          <Input {...register("email")} type="email" placeholder="rohan@company.com" />
         </Field>
         <Field label="Company Name" error={errors.companyName?.message}>
           <Input {...register("companyName")} placeholder="Acme Manufacturing Inc." />
         </Field>
-        <Field label="Phone (optional)" error={errors.phone?.message}>
+        <Field label="Phone" error={errors.phone?.message}>
           <Input {...register("phone")} placeholder="+91 98765 43210" />
         </Field>
       </div>

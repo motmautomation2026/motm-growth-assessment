@@ -72,13 +72,13 @@ export function Step1Form() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Full Name" error={errors.contactName?.message}>
-            <Input {...register("contactName")} placeholder="Jane Smith" />
+            <Input {...register("contactName")} placeholder="Rohan Sharma" />
           </Field>
           <Field label="Work Email" error={errors.email?.message}>
-            <Input {...register("email")} type="email" placeholder="jane@company.com" />
+            <Input {...register("email")} type="email" placeholder="rohan@company.com" />
           </Field>
-          <Field label="Phone (optional)" error={errors.phone?.message as string | undefined}>
-            <Input {...register("phone")} placeholder="+1 555 123 4567" />
+          <Field label="Phone" error={errors.phone?.message as string | undefined}>
+            <Input {...register("phone")} placeholder="+91 98765 43210" />
           </Field>
           <Field label="Job Title (optional)" error={errors.jobTitle?.message as string | undefined}>
             <Input {...register("jobTitle")} placeholder="VP of Sales" />

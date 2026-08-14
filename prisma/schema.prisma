@@ -307,6 +307,7 @@ model MicroToolSubmission {
   email       String?
   contactName String?
   companyName String?
+  phone       String?
   currency    String  @default("INR")
 
   inputs    Json

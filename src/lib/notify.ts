@@ -37,13 +37,14 @@ export async function notifyAssessmentCompleted(input: {
 export async function notifyGuideDownloaded(input: {
   contactName: string;
   email: string;
+  phone: string;
   companyName: string;
   guideTitle: string;
 }): Promise<void> {
   const text =
     `📄 *New guide download*\n` +
     `*${input.companyName}* — ${input.contactName}\n` +
-    `${input.email}\n` +
+    `${input.email} · ${input.phone}\n` +
     `Guide: ${input.guideTitle}`;
   await postToGoogleChat(text);
 }
@@ -51,6 +52,7 @@ export async function notifyGuideDownloaded(input: {
 export async function notifyMicroToolSubmitted(input: {
   contactName: string;
   email: string;
+  phone: string;
   companyName: string;
   toolName: string;
   resultUrl: string;
@@ -58,7 +60,7 @@ export async function notifyMicroToolSubmitted(input: {
   const text =
     `🔧 *New ${input.toolName} submission*\n` +
     `*${input.companyName}* — ${input.contactName}\n` +
-    `${input.email}\n` +
+    `${input.email} · ${input.phone}\n` +
     `<${input.resultUrl}|View Result>`;
   await postToGoogleChat(text);
 }

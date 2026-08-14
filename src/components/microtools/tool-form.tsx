@@ -64,17 +64,16 @@ export function ToolForm({
         </h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Full Name" error={fieldErrors.contactName?.message as string | undefined}>
-            <Input {...register("contactName")} placeholder="Jane Smith" />
+            <Input {...register("contactName")} placeholder="Rohan Sharma" />
           </Field>
           <Field label="Work Email" error={fieldErrors.email?.message as string | undefined}>
-            <Input {...register("email")} type="email" placeholder="jane@company.com" />
+            <Input {...register("email")} type="email" placeholder="rohan@company.com" />
           </Field>
-          <Field
-            label="Company Name"
-            error={fieldErrors.companyName?.message as string | undefined}
-            className={needsCurrency ? undefined : "sm:col-span-2"}
-          >
+          <Field label="Company Name" error={fieldErrors.companyName?.message as string | undefined}>
             <Input {...register("companyName")} placeholder="Acme Manufacturing Inc." />
+          </Field>
+          <Field label="Phone" error={fieldErrors.phone?.message as string | undefined}>
+            <Input {...register("phone")} placeholder="+91 98765 43210" />
           </Field>
           {needsCurrency ? (
             <Controller

@@ -6,6 +6,7 @@ export const leadCaptureSchema = z.object({
   contactName: z.string().min(2, "Enter your full name"),
   email: z.string().email("Enter a valid work email"),
   companyName: z.string().min(2, "Company name is required"),
+  phone: z.string().min(7, "Enter a valid phone number"),
   currency: z.enum(CURRENCIES),
 });
 export type LeadCaptureInput = z.infer<typeof leadCaptureSchema>;
@@ -41,6 +42,7 @@ export function buildFormSchema(fields: FieldConfig[], needsCurrency = false) {
     contactName: leadCaptureSchema.shape.contactName,
     email: leadCaptureSchema.shape.email,
     companyName: leadCaptureSchema.shape.companyName,
+    phone: leadCaptureSchema.shape.phone,
   };
   if (needsCurrency) shape.currency = leadCaptureSchema.shape.currency;
   for (const field of fields) shape[field.name] = buildFieldSchema(field);
@@ -48,7 +50,7 @@ export function buildFormSchema(fields: FieldConfig[], needsCurrency = false) {
 }
 
 export function buildDefaultValues(fields: FieldConfig[], needsCurrency = false): Record<string, unknown> {
-  const defaults: Record<string, unknown> = { contactName: "", email: "", companyName: "" };
+  const defaults: Record<string, unknown> = { contactName: "", email: "", companyName: "", phone: "" };
   if (needsCurrency) defaults.currency = "INR";
   for (const field of fields) {
     defaults[field.name] = field.type === "multiselect" ? [] : field.type === "number" ? 0 : "";

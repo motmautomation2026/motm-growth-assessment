@@ -6,7 +6,7 @@ export const CHANNEL_LEVELS = ["NONE", "PARTIAL", "FULL"] as const;
 export const contactSchema = z.object({
   contactName: z.string().min(2, "Enter your full name"),
   email: z.string().email("Enter a valid work email"),
-  phone: z.string().optional(),
+  phone: z.string().min(7, "Enter a valid phone number"),
   jobTitle: z.string().optional(),
 });
 export type ContactInput = z.infer<typeof contactSchema>;
