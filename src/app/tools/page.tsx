@@ -112,9 +112,14 @@ export default function ToolsIndexPage() {
         <Link href="/" className="flex items-center gap-2 font-heading text-base font-semibold tracking-tight">
           <Logo size={88} />
         </Link>
-        <Button nativeButton={false} render={<Link href="/assessment/start" />} size="sm">
-          Get Your Full Growth Assessment
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button nativeButton={false} render={<Link href="/assessment/start" />} size="sm">
+            Get Your Full Growth Assessment
+          </Button>
+          <Button nativeButton={false} render={<Link href="https://www.motm.tech/" />} size="sm">
+            Visit MOTM Technologies
+          </Button>
+        </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 pb-24">

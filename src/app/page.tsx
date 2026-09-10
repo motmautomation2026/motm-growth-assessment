@@ -52,6 +52,9 @@ export default async function LandingPage() {
           <Button nativeButton={false} render={<Link href="/assessment/start" />} size="sm">
             Start Assessment
           </Button>
+          <Button nativeButton={false} render={<Link href="https://www.motm.tech/" />} size="sm">
+            Visit MOTM Technologies
+          </Button>
         </div>
       </header>
 
