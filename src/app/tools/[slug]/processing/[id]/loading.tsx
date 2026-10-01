@@ -9,7 +9,7 @@ export default function ToolProcessingLoading() {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
       <Link
-        href="/"
+        href="https://www.motm.tech/"
         className="absolute top-6 left-6 flex items-center gap-2 font-heading text-base font-semibold tracking-tight"
       >
         <Logo size={88} />

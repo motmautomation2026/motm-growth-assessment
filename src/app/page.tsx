@@ -42,9 +42,9 @@ export default async function LandingPage() {
   return (
     <div className="flex flex-1 flex-col">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-2 font-heading text-base font-semibold tracking-tight">
+        <Link href="https://www.motm.tech/" className="flex items-center gap-2 font-heading text-base font-semibold tracking-tight">
           <Logo size={88} />
-        </div>
+        </Link>
         <div className="flex items-center gap-4">
           <Link href="/tools" className="text-sm font-medium text-muted-foreground hover:text-foreground">
             Free Tools

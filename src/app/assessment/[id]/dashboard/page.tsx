@@ -52,7 +52,7 @@ export default async function DashboardPage({
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 pt-6">
-        <Link href="/" className="flex items-center gap-2 font-heading text-base font-semibold tracking-tight">
+        <Link href="https://www.motm.tech/" className="flex items-center gap-2 font-heading text-base font-semibold tracking-tight">
           <Logo size={88} />
         </Link>
         <Link href="/tools" className="text-sm text-muted-foreground hover:text-foreground">

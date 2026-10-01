@@ -14,7 +14,7 @@ export function ToolShell({
   return (
     <div className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
-        <Link href="/" className="flex items-center gap-2 font-heading text-base font-semibold tracking-tight">
+        <Link href="https://www.motm.tech/" className="flex items-center gap-2 font-heading text-base font-semibold tracking-tight">
           <Logo size={88} />
         </Link>
         <Link href="/tools" className="text-sm text-muted-foreground hover:text-foreground">
